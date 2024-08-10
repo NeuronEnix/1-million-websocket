@@ -1,0 +1,24 @@
+name: websocket
+
+networks:
+  net:
+    name: ws
+
+services:
+  aggregator:
+    build:
+      context: ./aggregator
+    command: node main.mjs
+    container_name: websocket-aggregator
+    ports:
+      - ${AGGREGATOR_PORT:-3001}:${AGGREGATOR_PORT:-3001}
+    networks: [ net ]
+    env_file:
+      - .env
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./aggregator
+          target: /app
+          ignore:
+            - node_modules
