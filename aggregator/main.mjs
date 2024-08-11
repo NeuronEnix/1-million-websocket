@@ -1,8 +1,9 @@
+import fs from 'fs';
 import bodyParser from 'body-parser';
 import express from 'express';
 import dotenv from 'dotenv'
 import { Metrics } from './lib/metrics.mjs';
-dotenv.config({ path: '../.env' })
+fs.existsSync('../.env') && dotenv.config({ path: '../.env' })
 const meta = {
   connectionCount: 1000,
 }
@@ -22,8 +23,6 @@ app.post("/server-register", (req, res) => {
     host: data.host,
     ip: data.ip
   });
-  console.log(req.ip)
-  console.log(data)
   res.sendStatus(200);
 });
 
@@ -33,6 +32,8 @@ app.get('/get-metrics', (req, res) => {
 app.post('/server-metrics', (req, res) => {
   const data = req.body;
   data.ip = req.ip;
+  if ( data.host === "client" )
+    data.host += `-${data.ip.split(".")[3]}`
   metrics.pushServerMetrics(data);
   res.sendStatus(200);
 });

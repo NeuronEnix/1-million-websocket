@@ -1,24 +1,33 @@
-name: websocket
+name: ws
 
 networks:
   net:
-    name: ws
+    name: ws-net
 
 services:
   aggregator:
     build:
       context: ./aggregator
-    command: node main.mjs
-    container_name: websocket-aggregator
+    container_name: ws-aggregator
     ports:
       - ${AGGREGATOR_PORT:-3001}:${AGGREGATOR_PORT:-3001}
     networks: [ net ]
     env_file:
       - .env
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./aggregator
-          target: /app
-          ignore:
-            - node_modules
+
+  client:
+    build:
+      context: ./client
+    networks: [ net ]
+    env_file:
+      - .env
+    deploy:
+      replicas: 3
+
+  node:
+    build:
+      context: ./node
+    container_name: ws-node
+    networks: [ net ]
+    env_file:
+      - .env

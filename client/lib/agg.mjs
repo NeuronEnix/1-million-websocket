@@ -25,7 +25,7 @@ export class Agg {
   metrics;
   constructor() {
     this.metrics = {
-      host: "node", ip: "127.0.0.1",
+      host: "client", ip: "127.0.0.1",
       con: 0,
       msg: { received: 0, sent: 0 },
       bytes: { received: 0, sent: 0 },
@@ -34,6 +34,7 @@ export class Agg {
     this.connectionCount = 1000
   }
   updateResourceUsage() {
+    this.metrics.resourceUsage.prevCpu = this.metrics.resourceUsage.cpu
     this.metrics.resourceUsage.cpu = process.cpuUsage().user
     this.metrics.resourceUsage.memory = process.memoryUsage().rss
   }
@@ -43,11 +44,15 @@ export class Agg {
   async syncConnectionCount() {
     try {
       const res = await this.#aggAxios.get('server-connection-count')
-      this.connectionCount = parseInt(res.data.connectionCount)
-      console.log(this.connectionCount)
+      const newConnectionCount = parseInt(res.data.connectionCount)
+      if ( newConnectionCount !== this.connectionCount) {
+        this.connectionCount = newConnectionCount
+        console.log("Connection count: ", this.connectionCount)
+      }
+
     } catch (e) {
       if (e.code === "ECONNREFUSED") { return }
-      throw e
+      // throw e
     } finally {
       setTimeout(this.syncConnectionCount.bind(this), 1000)
     }
@@ -70,7 +75,7 @@ export class Agg {
       if (res.status !== 200) {
         console.log(res)
         console.log("Failed to send metrics res code != 200", `Got: ${res.status}`)
-        process.exit(1)
+        process.exit(2)
       }
     } catch (e) {
 
@@ -81,7 +86,7 @@ export class Agg {
         }
         return
       }
-      throw e
+      // throw e
     } finally {
       setTimeout(this.sendMetrics.bind(this), 1000)
     }

@@ -18,12 +18,15 @@ import Axios from 'axios';
 
 export class Agg {
   #isConnected = false;
+  #aggUrl = `http://${process.env.AGGREGATOR_HOST}:${process.env.AGGREGATOR_PORT}/`;
   #aggAxios = Axios.create({
     baseURL: `http://${process.env.AGGREGATOR_HOST}:${process.env.AGGREGATOR_PORT}/`,
   });
   /**@type {T_ServerMetrics} */
   metrics;
   constructor() {
+    this.#aggAxios = Axios.create({ baseURL: this.#aggUrl, });
+    console.log("Agg Url:", this.#aggUrl)
     this.metrics = {
       host: "node", ip: "127.0.0.1",
       con: 0,
@@ -49,16 +52,10 @@ export class Agg {
         console.log("Connected to aggregator")
       }
 
-      // const res = await fetch(`${this.#aggUrl}server-metrics`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(this.metrics)
-      // })
-
       if (res.status !== 200) {
         console.log(res)
         console.log("Failed to send metrics res code != 200", `Got: ${res.status}`)
-        process.exit(1)
+        process.exit(2)
       }
     } catch (e) {
 
@@ -69,7 +66,7 @@ export class Agg {
         }
         return
       }
-      throw e
+      // throw e
     } finally {
       setTimeout(this.sendMetrics.bind(this), 1000)
     }

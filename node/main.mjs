@@ -1,8 +1,9 @@
+import fs from 'fs';
 import dotenv from 'dotenv'
 import { WebSocketServer } from 'ws';
 import { Agg } from './lib/agg.mjs';
 
-dotenv.config({ path: '../.env' })
+fs.existsSync('../.env') && dotenv.config({ path: '../.env' })
 
 const agg = new Agg();
 
@@ -15,7 +16,7 @@ wss.on('connection', function connection(ws) {
   ws.on('error',(err) => {
     console.log("Node Socket Dead")
     console.error(err)
-    process.exit(1)
+    process.exit(2)
   });
 
   ws.on("close",(code, reason) => {

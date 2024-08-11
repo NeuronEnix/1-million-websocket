@@ -1,7 +1,8 @@
+import fs from 'fs';
 import dotenv from 'dotenv'
 import WebSocket from 'ws';
 import { Agg } from './lib/agg.mjs';
-dotenv.config({ path: '../.env' })
+fs.existsSync('../.env') && dotenv.config({ path: '../.env' })
 
 const agg = new Agg()
 agg.sendMetrics()
@@ -18,18 +19,21 @@ function syncConnectionCount() {
     for (let i = 0; i < numberOfNewConnections; i++) {
       const ws = new WebSocket(WS_URL);
       wsList.push(ws)
+      agg.metrics.con += 1
       ws.on('error', (err) => {
         console.log("Client websocket dead")
         console.error(err)
-        process.exit(1)
-      });
-      ws.on('open', function open() {
-        ws.send('something');
+        process.exit(2)
       });
 
       ws.on('message', function message(data) {
+        agg.metrics.msg.received += 1
+        agg.metrics.bytes.received += data.length
         // console.log('received: %s', data);
       });
+      ws.on("close", (code, reason) => {
+        agg.metrics.con -= 1
+      })
     }
   }
   if ( agg.connectionCount < wsList.length ) {
