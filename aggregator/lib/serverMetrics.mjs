@@ -1,25 +1,28 @@
 
 /**
  * @typedef {Object} T_ServerMetricsConstructor
- * @property {string} server - server name
+ * @property {string} host - server name
  * @property {string} ip - server IP
  */
 
 /**
  * @typedef {Object} T_ServerMetrics
- * @property {string} server
+ * @property {string} host
  * @property {string} ip
- * @property {number} connections
- * @property {number} messagesReceived
- * @property {number} messagesSent
- * @property {number} bytesReceived
- * @property {number} bytesSent
- * @property {number} cpuUsage
- * @property {number} memoryUsage
+ * @property {number} con
+ * @property {Object} msg
+ * @property {number} msg.received
+ * @property {number} msg.sent
+ * @property {Object} bytes
+ * @property {number} bytes.received
+ * @property {number} bytes.sent
+ * @property {Object} resourceUsage
+ * @property {number} resourceUsage.cpu
+ * @property {number} resourceUsage.memory
  */
 
 export class ServerMetrics {
-  #server;
+  #host;
   #ip;
   #metrics;
   /**
@@ -27,7 +30,7 @@ export class ServerMetrics {
    * @returns {ServerMetrics}
    */
   constructor(data) {
-    this.#server = data.server;
+    this.#host = data.host;
     this.#ip = data.ip;
   }
 
@@ -44,7 +47,6 @@ export class ServerMetrics {
    * @returns {T_ServerMetrics} data
    */
   get() {
-    console.log(this.#server, this.#ip);
     return this.#metrics;
   }
 }

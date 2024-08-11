@@ -1,21 +1,13 @@
 import { ClientMetrics } from "./clientMetrics.mjs";
 import { ServerMetrics } from "./serverMetrics.mjs";
 
-class Metrics {
+export class Metrics {
 
   /** @type {Map<string, ServerMetrics>} */
   #servers = new Map();
 
   /** @type {Map<string, ClientMetrics>} */
   #clients = new Map();
-
-  constructor() { }
-  /**
-   * @param {import("./serverMetrics.mjs").T_ServerMetricsConstructor} data
-   */
-  registerServer(data) {
-    return new ServerMetrics(data);
-  }
 
   registerClient(data) {
     return new ClientMetrics({ server, ip });
@@ -25,11 +17,14 @@ class Metrics {
    * @param {import("./serverMetrics.mjs").T_ServerMetrics} data
    */
   pushServerMetrics(data) {
-    this.#servers.get(data.server).push(data);
+    if (!this.#servers.has(data.host)) {
+      this.#servers.set(data.host, new ServerMetrics(data));
+    }
+    this.#servers.get(data.host).push(data);
     return this
   }
 
-  getMetrics() {
+  get() {
     /** @type {Array<ServerMetrics>} */
     const servers = [];
     /** @type {Array<ClientMetrics>} */
@@ -42,6 +37,3 @@ class Metrics {
   }
 
 }
-
-
-export const metrics = Metrics()
