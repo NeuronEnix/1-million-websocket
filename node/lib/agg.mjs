@@ -29,10 +29,11 @@ export class Agg {
       con: 0,
       msg: { received: 0, sent: 0 },
       bytes: { received: 0, sent: 0 },
-      resourceUsage: { cpu: 0, memory: 0 }
+      resourceUsage: { cpu: 0, prevCpu: 0, memory: 0 }
     }
   }
   updateResourceUsage() {
+    this.metrics.resourceUsage.prevCpu = this.metrics.resourceUsage.cpu
     this.metrics.resourceUsage.cpu = process.cpuUsage().user
     this.metrics.resourceUsage.memory = process.memoryUsage().rss
   }
