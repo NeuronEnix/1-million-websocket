@@ -1,14 +1,32 @@
+import dotenv from 'dotenv'
 import { WebSocketServer } from 'ws';
-import CONFIG from "../config.json" assert { type: "json" };
+import { Agg } from './lib/agg.mjs';
 
-const wss = new WebSocketServer({ port: CONFIG.PORT });
+dotenv.config({ path: '../.env' })
+const agg = new Agg();
+// async function yo() {
+//   try {
+//     await fetch("http://localhost:3000/server-register")
 
-wss.on('connection', function connection(ws) {
-  ws.on('error', console.error);
+//   } catch(e) {
+//     console.log(Object.entries(e))
+//   }
 
-  ws.on('message', function message(data) {
-    console.log('received: %s', data);
-  });
+// }
+// yo()
 
-  ws.send('something');
-});
+agg.sendMetrics()
+// const wss = new WebSocketServer({ port: process.env.SERVER_PORT || 3000 });
+// wss.on('connection', function connection(ws) {
+//   agg.metrics.con += 1
+//   ws.onclose = () => {
+//     agg.metrics.con -= 1
+//   }
+//   ws.onerror((event) => {
+//     console.log(event)
+//   })
+//   ws.onmessage((event) => {
+//     console.log('received: %s', event);
+//   })
+//   ws.send('something');
+// });
