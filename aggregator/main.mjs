@@ -3,6 +3,9 @@ import express from 'express';
 import dotenv from 'dotenv'
 import { Metrics } from './lib/metrics.mjs';
 dotenv.config({ path: '../.env' })
+const meta = {
+  connectionCount: 1000,
+}
 
 const metrics = new Metrics();
 
@@ -32,6 +35,18 @@ app.post('/server-metrics', (req, res) => {
   data.ip = req.ip;
   metrics.pushServerMetrics(data);
   res.sendStatus(200);
+});
+
+app.post('/server-connection-count', (req, res) => {
+  const data = req.body;
+  meta.connectionCount = data.connectionCount
+  res.sendStatus(200);
+});
+
+app.get('/server-connection-count', (req, res) => {
+  res.send({
+    connectionCount: meta.connectionCount
+  })
 });
 
 // Start the server

@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1 Million Websocket</title>
 </head>
+
 <body>
+    <h1>Connections: </h1>
+    <input type="text" id="connection-count" value="1000" onkeypress="if(event.key === 'Enter'){document.getElementById('connection-btn').click()}">
     <h1>Clients</h1>
     <table id="client-table" border="2">
         <th>Ip</th>

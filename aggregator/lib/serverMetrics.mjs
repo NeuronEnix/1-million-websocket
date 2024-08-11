@@ -18,6 +18,7 @@
  * @property {number} bytes.sent
  * @property {Object} resourceUsage
  * @property {number} resourceUsage.cpu
+ * @property {number} resourceUsage.prevCpu
  * @property {number} resourceUsage.memory
  */
 
