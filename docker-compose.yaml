@@ -7,7 +7,7 @@ networks:
 services:
   aggregator:
     build:
-      context: ./aggregator
+      context: ./controller
     container_name: ws-aggregator
     ports:
       - ${AGGREGATOR_PORT:-3001}:${AGGREGATOR_PORT:-3001}
